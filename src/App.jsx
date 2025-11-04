@@ -1,77 +1,69 @@
-import { Toaster } from "./components/ui/sonner";
-import { TooltipProvider } from "./components/ui/tooltip";
-// import NotFound from "./pages/NotFound";
-import { Route, Switch } from "wouter";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
-import Sessions from "./pages/Sessions";
-import SessionDetail from "./pages/SessionDetail";
-import MyBookings from "./pages/MyBookings";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import Shop from "./pages/Shop";
-import ProductDetail from "./pages/ProductDetail";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import Orders from "./pages/Orders";
-import OrderDetail from "./pages/OrderDetail";
-import Profile from "./pages/Profile";
-
-function Router() {
-  // make sure to consider if you need authentication for certain routes
-  return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      
-      {/* Swimming Sessions */}
-      <Route path={"/sessions"} component={Sessions} />
-      <Route path={"/sessions/:id"} component={SessionDetail} />
-      <Route path={"/my-bookings"} component={MyBookings} />
-      
-      {/* Blog */}
-      <Route path={"/blog"} component={Blog} />
-      <Route path={"/blog/:slug"} component={BlogPost} />
-      
-      {/* Shop */}
-      <Route path={"/shop"} component={Shop} />
-      <Route path={"/shop/category/:slug"} component={Shop} />
-      <Route path={"/product/:slug"} component={ProductDetail} />
-      <Route path={"/cart"} component={Cart} />
-      <Route path={"/checkout"} component={Checkout} />
-      
-      {/* Orders */}
-      <Route path={"/orders"} component={Orders} />
-      <Route path={"/orders/:id"} component={OrderDetail} />
-      
-      {/* Profile */}
-      <Route path={"/profile"} component={Profile} />
-      
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
-
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Home from './pages/Home';
+import Sessions from './pages/Sessions';
+import Bookings from './pages/Bookings';
+import Shop from './pages/Shop';
+import Blog from './pages/Blog';
+import Profile from './pages/Profile';
+import './App.css';
 
 function App() {
   return (
-    <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+    <Router>
+      <div className="App">
+        <nav className="navbar">
+          <div className="nav-container">
+            <Link to="/" className="nav-logo">
+              🏊‍♂️ Swimming School
+            </Link>
+            <ul className="nav-menu">
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/sessions">Sessions</Link></li>
+              <li><Link to="/bookings">My Bookings</Link></li>
+              <li><Link to="/shop">Shop</Link></li>
+              <li><Link to="/blog">Blog</Link></li>
+              <li><Link to="/profile">Profile</Link></li>
+            </ul>
+          </div>
+        </nav>
+
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/sessions" element={<Sessions />} />
+            <Route path="/bookings" element={<Bookings />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/profile" element={<Profile />} />
+          </Routes>
+        </main>
+
+        <footer className="footer">
+          <div className="footer-container">
+            <div className="footer-section">
+              <h3>Swimming School</h3>
+              <p>Your comprehensive platform for swimming education</p>
+            </div>
+            <div className="footer-section">
+              <h4>Quick Links</h4>
+              <ul>
+                <li><Link to="/sessions">Browse Sessions</Link></li>
+                <li><Link to="/shop">Shop Equipment</Link></li>
+                <li><Link to="/blog">Read Blog</Link></li>
+              </ul>
+            </div>
+            <div className="footer-section">
+              <h4>Contact</h4>
+              <p>Email: info@swimmingschool.com</p>
+              <p>Phone: +1 (555) 123-4567</p>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>&copy; 2024 Swimming School Management Platform. All rights reserved.</p>
+          </div>
+        </footer>
+      </div>
+    </Router>
   );
 }
 
