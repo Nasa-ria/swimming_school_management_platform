@@ -47,9 +47,9 @@ function Router() {
       {/* Profile */}
       <Route path={"/profile"} component={Profile} />
       
-      {/* <Route path={"/404"} component={NotFound} /> */}
+      <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
-      {/* <Route component={NotFound} /> */}
+      <Route component={NotFound} />
     </Switch>
   );
 }
