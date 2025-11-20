@@ -444,28 +444,7 @@ function Home(){
       </section>
 
       {/* Footer */}
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="footer-logo">
-            <Waves className="w-8 h-8" style={{ color: '#22d3ee' }} />
-            <span className="footer-logo-text">Swimming School</span>
-          </div>
-          <p className="footer-copyright">
-            © {new Date().getFullYear()} Swimming School Management Platform. All rights reserved.
-          </p>
-          <div className="footer-links">
-            <button onClick={() => handleNavigate('/privacy')} className="footer-link">
-              Privacy Policy
-            </button>
-            <button onClick={() => handleNavigate('/terms')} className="footer-link">
-              Terms of Service
-            </button>
-            <button onClick={() => handleNavigate('/contact')} className="footer-link">
-              Contact Us
-            </button>
-          </div>
-        </div>
-      </footer>
+     
     </div>
   );
 };

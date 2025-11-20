@@ -3,6 +3,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const { generateToken, verifyToken } = require('./jwtToken');
 const bcrypt = require('bcrypt');
+const { OAuth2Client } = require('google-auth-library');
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Load environment variables
 dotenv.config();
@@ -41,7 +43,7 @@ app.post('/api/auth/login', (req, res) => {
 });
 
 // Signup endpoint
-app.post('/api/auth/signup', (req, res) => {
+app.post('/api/auth/register', (req, res) => {
     const { fullName, email, password, phone, token } = req.body;
 
     // Verify token if provided
@@ -66,6 +68,43 @@ app.post('/api/auth/signup', (req, res) => {
         res.status(400).json({
             message: 'Missing required fields'
         });
+    }
+});
+
+
+// i want to auth via google oauth2
+
+app.post('/api/auth/google', async (req, res) => {
+    const { idToken } = req.body;
+    try {   
+        const ticket = await googleClient.verifyIdToken({
+            idToken,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        const userid = payload['sub'];
+        // Here you would typically find or create the user in your database
+        res.json({
+            message: 'Google authentication successful',
+            userId: userid,
+            email: payload['email'],
+            name: payload['name']
+        });
+    } catch (error) {
+        res.status(401).json({ message: 'Google authentication failed', error: error.message });
+    }
+});
+
+app.post('/api/auth/facebook', (req, res) => {
+    const { accessToken } = req.body;
+    // Placeholder logic for Facebook authentication
+    if (accessToken) {
+        res.json({
+            message: 'Facebook authentication successful',
+            userId: 'facebook-user-id'
+        });
+    } else {
+        res.status(401).json({ message: 'Facebook authentication failed' });
     }
 });
 

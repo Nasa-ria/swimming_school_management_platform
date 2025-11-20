@@ -9,7 +9,13 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import './App.css';
 
+import { useState } from 'react';
+
+
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+
   return (
     <Router>
       <div className="App">
@@ -20,12 +26,19 @@ function App() {
             </Link>
             <ul className="nav-menu">
               <li><Link to="/">Home</Link></li>
-              <li><Link to="/sessions">Sessions</Link></li>
-              <li><Link to="/bookings">My Bookings</Link></li>
-              <li><Link to="/shop">Shop</Link></li>
               <li><Link to="/blog">Blog</Link></li>
-              <li><Link to="/profile">Profile</Link></li>
-              <li><Link to="/login">Login</Link></li>
+
+              {isLoggedIn && userRole === 'student' && (
+                <>
+                  <li><Link to="/bookings">My Bookings</Link></li>
+                  <li><Link to="/profile">Profile</Link></li>
+                  <li><Link to="/sessions">Sessions</Link></li>
+                  <li><Link to="/blog">Blog</Link></li>
+
+                </>
+              )}
+              <li><Link to="/shop">Shop</Link></li>
+              {!isLoggedIn && <li><Link to="/login">Login</Link></li>}
             </ul>
           </div>
         </nav>
@@ -38,7 +51,7 @@ function App() {
             <Route path="/shop" element={<Shop />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
             <Route path='/signup' element={<SignUp />} />
           </Routes>
         </main>
