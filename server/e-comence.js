@@ -53,3 +53,5 @@ app.delete('/api/auth/e-comence/products/:id', (req, res) => {
         message: `Product ${productId} deleted successfully`
     });
 });
+
+module.exports = app;

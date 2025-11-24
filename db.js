@@ -1,36 +1,30 @@
-const mysql = require('mysql2');
+const { MongoClient } = require('mongodb');
 const dotenv = require('dotenv');
 
-// Load environment variables
 dotenv.config();
 
-// Create connection pool
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'swimming_school',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+const uri = process.env.MONGO_URI ;
+const dbName = process.env.MONGO_DB ;
+
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 });
 
-// Promisify for async/await
-const promisePool = pool.promise();
+let dbInstance = null;
 
-// Test connection
-pool.getConnection((err, connection) => {
-  if (err) {
-    console.error('❌ Database connection failed:', err.message);
-    console.log('💡 Make sure to:');
-    console.log('   1. Create a .env file in the root directory');
-    console.log('   2. Add your database credentials');
-    console.log('   3. Run the schema.sql file to create tables\n');
-  } else {
-    console.log('✅ Database connected successfully');
-    connection.release();
+async function getDb() {
+  if (dbInstance) return dbInstance;
+  try {
+    await client.connect();
+    dbInstance = client.db(dbName);
+    console.log(`✅ MongoDB connected to ${uri}/${dbName}`);
+    return dbInstance;
+  } catch (err) {
+    console.error('❌ MongoDB connection failed:', err.message);
+    console.log('💡 Ensure MongoDB is running and the URI is correct');
+    throw err;
   }
-});
+}
 
-module.exports = promisePool;
-
+module.exports = { getDb, client };

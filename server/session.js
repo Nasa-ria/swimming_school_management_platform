@@ -1,6 +1,9 @@
 const authRoutes = require('./auth');
 const db = require('./db'); 
 app.use('/api/auth', authRoutes);
+const { Session, Booking, Member } = require("../database/sessionschema"); 
+const mongoose = require("mongoose");
+
 
 app.get('/api/sessions', async (req, res) => {
     try {
@@ -118,3 +121,130 @@ app.get('/api/auth/session-left/:studentId', async (req, res) => {
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 });
+// controllers/instructorController.js
+
+const getUpcomingSessions = async (req, res) => {
+  try {
+    const { instructorId } = req.params;
+    const now = new Date();
+
+    const sessions = await Session.aggregate([
+      { $match: { instructor: mongoose.Types.ObjectId.isValid(instructorId) ? mongoose.Types.ObjectId(instructorId) : instructorId, start_time: { $gte: now } } },
+      {
+        $lookup: {
+          from: "bookings",
+          localField: "_id",
+          foreignField: "session_id",
+          as: "bookings"
+        }
+      },
+      {
+        $addFields: {
+          reserved: { $sum: "$bookings.num_spots" }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          start_time: 1,
+          end_time: 1,
+          location: 1,
+          capacity: 1,
+          reserved: 1,
+          remaining: { $subtract: ["$capacity", { $ifNull: ["$reserved", 0] }] },
+          status: 1
+        }
+      },
+      { $sort: { start_time: 1 } }
+    ]);
+
+    res.json(sessions);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getPastSessions = async (req, res) => {
+  try {
+    const { instructorId } = req.params;
+    const now = new Date();
+
+    const sessions = await Session.aggregate([
+      { $match: { instructor: mongoose.Types.ObjectId.isValid(instructorId) ? mongoose.Types.ObjectId(instructorId) : instructorId, start_time: { $lt: now } } },
+      {
+        $lookup: {
+          from: "bookings",
+          localField: "_id",
+          foreignField: "session_id",
+          as: "bookings"
+        }
+      },
+      {
+        $addFields: {
+          reserved: { $sum: "$bookings.num_spots" },
+          checkedIn: {
+            $sum: {
+              $map: {
+                input: "$bookings",
+                as: "b",
+                in: { $cond: [{ $eq: ["$$b.booking_status", "checked_in"] }, "$$b.num_spots", 0] }
+              }
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          start_time: 1,
+          capacity: 1,
+          reserved: 1,
+          checkedIn: 1,
+          status: 1
+        }
+      },
+      { $sort: { start_time: -1 } }
+    ]);
+
+    res.json(sessions);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getSessionBookings = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+
+    const bookings = await Booking.find({ session_id: sessionId })
+      .populate("member_id", "first_name last_name email")
+      .sort({ booked_at: 1 })
+      .lean();
+
+    const formatted = bookings.map(b => ({
+      booking_id: b._id,
+      booking_status: b.booking_status,
+      num_spots: b.num_spots,
+      booked_at: b.booked_at,
+      cancelled_at: b.cancelled_at,
+      notes: b.notes,
+      member: b.member_id ? {
+        id: b.member_id._id,
+        first_name: b.member_id.first_name,
+        last_name: b.member_id.last_name,
+        email: b.member_id.email
+      } : null
+    }));
+
+    res.json(formatted);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = app;

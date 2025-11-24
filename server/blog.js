@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const blog = require('../database/blogschema');
 
 // Load environment variables
 dotenv.config();
@@ -16,6 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 const authRoutes = require('./auth');
 const db = require('./db'); 
 app.use('/api/auth', authRoutes);
+
+
 
 app.get('/api/blog/posts', (req, res) => {
     // Placeholder logic to fetch blog posts
