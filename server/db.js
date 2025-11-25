@@ -11,8 +11,14 @@ const connectDB = async () => {
     if (!uri) {
       throw new Error('MONGODB_URI is not defined in environment variables');
     }
+
+    // Extract database name from URI
+    const dbName = uri.split('/').pop().split('?')[0] || 'default';
+
     await mongoose.connect(uri);
     console.log('✅ Database connected successfully');
+    console.log(`📊 Database name: ${dbName}`);
+    console.log(`🔗 Connection: ${uri.replace(/\/\/.*:.*@/, '//***:***@')}`);
   } catch (err) {
     console.error('❌ Database connection failed:', err.message);
     console.log('💡 Make sure to:');
