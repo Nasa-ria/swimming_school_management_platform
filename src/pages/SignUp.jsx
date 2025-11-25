@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+// const baseUrl = process.env.REACT_APP_BASE_URL;
 
 const initialState = {
     fullName: "",
@@ -19,6 +20,7 @@ function SignUp() {
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
+
 
     const validate = () => {
         const newErrors = {};
@@ -53,12 +55,11 @@ function SignUp() {
         e.preventDefault();
         const validationErrors = validate();
         setErrors(validationErrors);
-        
+
         if (Object.keys(validationErrors).length === 0) {
             setLoading(true);
             try {
-                // API call here
-                const response = await fetch('/api/auth/register', {
+                const response = await fetch('http://localhost:5000/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -66,17 +67,29 @@ function SignUp() {
                         email: form.email,
                         password: form.password,
                         phone: form.phone,
-                        dob: form.dob,
-                        gender: form.gender,
-                        address: form.address,
-                        agree: form.agree,
+                        role: 'student' // Default role for signup
                     }),
                 });
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                setSubmitted(true);
-                setForm(initialState);
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    setSubmitted(true);
+                    setForm(initialState);
+                    // Optionally store token and redirect
+                    if (data.token) {
+                        localStorage.setItem('authToken', data.token);
+                        // Redirect to dashboard after 2 seconds
+                        setTimeout(() => {
+                            window.location.href = '/student';
+                        }, 2000);
+                    }
+                } else {
+                    setErrors({ submit: data.message || 'Registration failed. Please try again.' });
+                }
             } catch (error) {
-                setErrors({ submit: "Registration failed. Please try again." });
+                console.error('Registration error:', error);
+                setErrors({ submit: 'Network error. Please check your connection and try again.' });
             } finally {
                 setLoading(false);
             }
@@ -103,43 +116,43 @@ function SignUp() {
             ) : (
                 <form onSubmit={handleSubmit} noValidate>
                     {errors.submit && <div style={{ color: "#f44336", marginBottom: 12 }}>{errors.submit}</div>}
-                    
+
                     <div>
                         <label style={{ fontWeight: "500" }}>Full Name *</label>
                         <input type="text" name="fullName" value={form.fullName} onChange={handleChange} style={inputStyle} />
                         {errors.fullName && <div style={{ color: "#f44336", fontSize: "12px" }}>• {errors.fullName}</div>}
                     </div>
-                    
+
                     <div>
                         <label style={{ fontWeight: "500" }}>Email *</label>
                         <input type="email" name="email" value={form.email} onChange={handleChange} style={inputStyle} />
                         {errors.email && <div style={{ color: "#f44336", fontSize: "12px" }}>• {errors.email}</div>}
                     </div>
-                    
+
                     <div>
                         <label style={{ fontWeight: "500" }}>Password (min 6 characters) *</label>
                         <input type="password" name="password" value={form.password} onChange={handleChange} style={inputStyle} />
                         {errors.password && <div style={{ color: "#f44336", fontSize: "12px" }}>• {errors.password}</div>}
                     </div>
-                    
+
                     <div>
                         <label style={{ fontWeight: "500" }}>Confirm Password *</label>
                         <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} style={inputStyle} />
                         {errors.confirmPassword && <div style={{ color: "#f44336", fontSize: "12px" }}>• {errors.confirmPassword}</div>}
                     </div>
-                    
+
                     <div>
                         <label style={{ fontWeight: "500" }}>Phone *</label>
                         <input type="tel" name="phone" value={form.phone} onChange={handleChange} style={inputStyle} placeholder="10+ digits" />
                         {errors.phone && <div style={{ color: "#f44336", fontSize: "12px" }}>• {errors.phone}</div>}
                     </div>
-                    
+
                     <div>
                         <label style={{ fontWeight: "500" }}>Date of Birth *</label>
                         <input type="date" name="dob" value={form.dob} onChange={handleChange} style={inputStyle} />
                         {errors.dob && <div style={{ color: "#f44336", fontSize: "12px" }}>• {errors.dob}</div>}
                     </div>
-                    
+
                     <div>
                         <label style={{ fontWeight: "500" }}>Gender *</label>
                         <select name="gender" value={form.gender} onChange={handleChange} style={inputStyle}>
@@ -148,13 +161,13 @@ function SignUp() {
                         </select>
                         {errors.gender && <div style={{ color: "#f44336", fontSize: "12px" }}>• {errors.gender}</div>}
                     </div>
-                    
+
                     <div>
                         <label style={{ fontWeight: "500" }}>Address *</label>
                         <textarea name="address" value={form.address} onChange={handleChange} style={{ ...inputStyle, resize: "vertical" }} rows={2} />
                         {errors.address && <div style={{ color: "#f44336", fontSize: "12px" }}>• {errors.address}</div>}
                     </div>
-                    
+
                     <div style={{ marginBottom: 16 }}>
                         <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
                             <input type="checkbox" name="agree" checked={form.agree} onChange={handleChange} style={{ marginRight: 8 }} />
@@ -162,7 +175,7 @@ function SignUp() {
                         </label>
                         {errors.agree && <div style={{ color: "#f44336", fontSize: "12px" }}>• {errors.agree}</div>}
                     </div>
-                    
+
                     <button type="submit" disabled={loading} style={{ width: "100%", padding: "12px", backgroundColor: loading ? "#ccc" : "#2196F3", color: "white", border: "none", borderRadius: "4px", fontSize: "16px", fontWeight: "500", cursor: loading ? "not-allowed" : "pointer" }}>
                         {loading ? "Creating Account..." : "Sign Up"}
                     </button>

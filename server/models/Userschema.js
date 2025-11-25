@@ -14,7 +14,7 @@ const RoleSchema = new Schema({
     description: { type: String }
 }, { collection: 'roles' });
 
-RoleSchema.index({ name: 1 }, { unique: true });
+// Removed duplicate index - unique: true in schema already creates the index
 
 const UserSchema = new Schema({
     email: { type: String, required: true },

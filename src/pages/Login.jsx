@@ -1,25 +1,32 @@
+
+
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 
 
-function Login() {
+
+
+function Login({ setIsLoggedIn, setUserRole }) {
+    const navigate = useNavigate();
     // Form state
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [remember, setRemember] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
+
     // UI & async state
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState(null); // success or error
-    const [messageType, setMessageType] = useState("info"); // info, success, error
+    const [message, setMessage] = useState(null);
+    const [messageType, setMessageType] = useState("info");
     const [requires2FA, setRequires2FA] = useState(false);
     const [twoFACode, setTwoFACode] = useState("");
     const [lockoutSeconds, setLockoutSeconds] = useState(0);
     const attemptsRef = useRef(0);
 
-    
+
     useEffect(() => {
         if (!lockoutSeconds) return;
         const t = setInterval(() => {
@@ -53,10 +60,7 @@ function Login() {
             case 0: return { label: "Too short", color: "#ff6b6b", width: "6%" };
             case 1: return { label: "Weak", color: "#ff753a", width: "35%" };
             case 2: return { label: "Fair", color: "#ffb545", width: "60%" };
-            case 3: return { label: "Good", color: "#7be495", width: "80%" };
-            case 4: return { label: "Strong", color: "#05c46b", width: "100%" };
-            default: return { label: "", color: "#e6eef0", width: "0%" };
-        }
+        };
     };
 
     // Handle form submit
@@ -96,9 +100,19 @@ function Login() {
                 setMessageType("success");
                 setMessage("Login successful. Redirecting...");
                 setRequires2FA(false);
+
+                // Determine role based on email for testing, or response data
+                const role = email.includes('admin') ? 'admin' : 'student';
+                setIsLoggedIn(true);
+                setUserRole(role);
+
                 // optionally redirect or set auth state:
                 setTimeout(() => {
-                    // window.location.replace('/dashboard');
+                    if (role === 'admin') {
+                        navigate('/admin');
+                    } else {
+                        navigate('/student');
+                    }
                     setMessage("Ready.");
                 }, 800);
             } else {
@@ -164,13 +178,6 @@ function Login() {
         }
     };
 
-    // Social login placeholder
-    const handleSocial = (provider) => {
-        // Replace with real OAuth flow
-        const url = `/auth/${provider}`;
-        window.open(url, "_self");
-    };
-
     const pws = passwordStrength(password);
     const pwsMeta = pwStrengthLabel(pws);
 
@@ -180,8 +187,8 @@ function Login() {
                 <div className="left">
                     <div className="brand">
                         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden>
-                            <rect width="24" height="24" rx="6" fill="#0077CC"/>
-                            <path d="M6 14c1-2 4-4 6-4s5 2 6 4" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <rect width="24" height="24" rx="6" fill="#0077CC" />
+                            <path d="M6 14c1-2 4-4 6-4s5 2 6 4" stroke="#fff" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                         Swimming School
                     </div>
@@ -194,8 +201,8 @@ function Login() {
                 </div>
 
                 <div className="right">
-                    <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-                        <div style={{fontSize:18, fontWeight:700}}>Sign in</div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div style={{ fontSize: 18, fontWeight: 700 }}>Sign in</div>
                         <div className="muted">New? <a href="/signup" className="hint-link">Create account</a></div>
                     </div>
 
@@ -223,13 +230,13 @@ function Login() {
                             </div>
 
                             <div>
-                                <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                     <label htmlFor="password">Password</label>
-                                    <div style={{fontSize:12}} className="muted">
+                                    <div style={{ fontSize: 12 }} className="muted">
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword((s) => !s)}
-                                            style={{background:"transparent", border:0, color:"#065a8d", cursor:"pointer", padding:0}}
+                                            style={{ background: "transparent", border: 0, color: "#065a8d", cursor: "pointer", padding: 0 }}
                                             aria-pressed={showPassword}
                                         >
                                             {showPassword ? "Hide" : "Show"}
@@ -246,22 +253,22 @@ function Login() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                 />
-                                <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:8}}>
-                                    <div style={{flex:1}}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
+                                    <div style={{ flex: 1 }}>
                                         <div className="pw-meter" aria-hidden>
                                             <div
                                                 className="pw-fill"
                                                 style={{ width: pwsMeta.width, background: pwsMeta.color }}
                                             />
                                         </div>
-                                        <div className="small" style={{marginTop:6}}>{pwsMeta.label}</div>
+                                        <div className="small" style={{ marginTop: 6 }}>{pwsMeta.label}</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="row" style={{justifyContent:"space-between", alignItems:"center"}}>
-                                <label style={{display:"flex", alignItems:"center", gap:8}}>
-                                    <input type="checkbox" checked={remember} onChange={(e)=> setRemember(e.target.checked)} />
+                            <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
+                                <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                    <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
                                     <span className="small">Remember me</span>
                                 </label>
                                 <div>
@@ -269,7 +276,7 @@ function Login() {
                                 </div>
                             </div>
 
-                            <div style={{display:"flex", gap:12, marginTop:6}}>
+                            <div style={{ display: "flex", gap: 12, marginTop: 6 }}>
                                 <button
                                     className="btn btn-primary"
                                     type="submit"
@@ -285,7 +292,7 @@ function Login() {
 
                             <div className="divider" />
 
-                            <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                 <div className="muted">Or sign in with</div>
                                 <div className="socials">
                                     <button aria-label="Sign in with Google" className="btn btn-ghost" onClick={() => handleSocial("google")}>Google</button>
@@ -310,7 +317,7 @@ function Login() {
                                 <div className="small">Enter the code from your authenticator or SMS.</div>
                             </div>
 
-                            <div style={{display:"flex", gap:12, marginTop:6}}>
+                            <div style={{ display: "flex", gap: 12, marginTop: 6 }}>
                                 <button className="btn btn-primary" type="submit" disabled={loading}>
                                     {loading ? <span className="spinner" aria-hidden /> : "Verify"}
                                 </button>
@@ -321,13 +328,15 @@ function Login() {
                         </form>
                     )}
 
-                    <div style={{marginTop:8}} className="small">
-                        By signing in you agree to the <span className="hint-link" onClick={()=> alert('TOS')}>Terms</span>.
+                    <div style={{ marginTop: 8 }} className="small">
+                        By signing in you agree to the <span className="hint-link" onClick={() => alert('TOS')}>Terms</span>.
                     </div>
                 </div>
             </div>
         </div>
     );
 }
+
+
 
 export default Login;

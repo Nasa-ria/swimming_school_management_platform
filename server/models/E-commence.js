@@ -84,7 +84,7 @@ const OrderItemSchema = new Schema({
 const OrderSchema = new Schema({
     user: { type: ObjectId, ref: 'User' },
     orderNumber: { type: String, unique: true, required: true },
-    status: { type: String, enum: ['pending','paid','processing','shipped','completed','cancelled','refunded'], default: 'pending' },
+    status: { type: String, enum: ['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled', 'refunded'], default: 'pending' },
     subtotal: { type: Decimal128, default: 0.00 },
     tax: { type: Decimal128, default: 0.00 },
     shippingCost: { type: Decimal128, default: 0.00 },
@@ -103,7 +103,7 @@ const PaymentSchema = new Schema({
     order: { type: ObjectId, ref: 'Order', required: true },
     amount: { type: Decimal128, required: true },
     method: String,
-    status: { type: String, enum: ['pending','completed','failed','refunded'], default: 'pending' },
+    status: { type: String, enum: ['pending', 'completed', 'failed', 'refunded'], default: 'pending' },
     transactionId: String,
     paidAt: Date
 }, { timestamps: true });
@@ -112,7 +112,7 @@ const ShipmentSchema = new Schema({
     order: { type: ObjectId, ref: 'Order', required: true },
     carrier: String,
     trackingNumber: String,
-    status: { type: String, enum: ['ready','shipped','in_transit','delivered','returned'], default: 'ready' },
+    status: { type: String, enum: ['ready', 'shipped', 'in_transit', 'delivered', 'returned'], default: 'ready' },
     shippedAt: Date,
     deliveredAt: Date
 }, { timestamps: true });
@@ -120,7 +120,7 @@ const ShipmentSchema = new Schema({
 const CouponSchema = new Schema({
     code: { type: String, required: true, unique: true },
     description: String,
-    discountType: { type: String, enum: ['percent','fixed'], required: true },
+    discountType: { type: String, enum: ['percent', 'fixed'], required: true },
     discountValue: { type: Decimal128, required: true },
     usageLimit: Number,
     usedCount: { type: Number, default: 0 },

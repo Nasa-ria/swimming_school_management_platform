@@ -7,6 +7,8 @@ import Blog from './pages/Blog';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import AdminDashboard from './pages/AdminDashboard';
+import StudentDashboard from './pages/StudentDashboard';
 import './App.css';
 
 import { useState } from 'react';
@@ -30,11 +32,19 @@ function App() {
 
               {isLoggedIn && userRole === 'student' && (
                 <>
+                  <li><Link to="/student">Dashboard</Link></li>
                   <li><Link to="/bookings">My Bookings</Link></li>
                   <li><Link to="/profile">Profile</Link></li>
                   <li><Link to="/sessions">Sessions</Link></li>
                   <li><Link to="/blog">Blog</Link></li>
 
+                </>
+              )}
+              {isLoggedIn && userRole === 'admin' && (
+                <>
+                  <li><Link to="/admin">Dashboard</Link></li>
+                  <li><Link to="/admin/members">Members</Link></li>
+                  <li><Link to="/admin/sessions">Sessions</Link></li>
                 </>
               )}
               <li><Link to="/shop">Shop</Link></li>
@@ -53,6 +63,8 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
             <Route path='/signup' element={<SignUp />} />
+            <Route path="/admin" element={isLoggedIn && userRole === 'admin' ? <AdminDashboard /> : <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
+            <Route path="/student" element={isLoggedIn && userRole === 'student' ? <StudentDashboard /> : <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
           </Routes>
         </main>
 
