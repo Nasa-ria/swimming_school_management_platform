@@ -1,12 +1,7 @@
 
-
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
-
-
-
-
 
 function Login({ setIsLoggedIn, setUserRole }) {
     const navigate = useNavigate();
@@ -16,7 +11,6 @@ function Login({ setIsLoggedIn, setUserRole }) {
     const [remember, setRemember] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-
     // UI & async state
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState(null);
@@ -25,7 +19,6 @@ function Login({ setIsLoggedIn, setUserRole }) {
     const [twoFACode, setTwoFACode] = useState("");
     const [lockoutSeconds, setLockoutSeconds] = useState(0);
     const attemptsRef = useRef(0);
-
 
     useEffect(() => {
         if (!lockoutSeconds) return;
@@ -178,6 +171,56 @@ function Login({ setIsLoggedIn, setUserRole }) {
         }
     };
 
+    // Handle Google Sign-In Response
+    const handleGoogleResponse = async (response) => {
+        try {
+            const res = await fetch("/api/auth/google", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ idToken: response.credential }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setMessageType("success");
+                setMessage("Google login successful. Redirecting...");
+                setIsLoggedIn(true);
+                setUserRole(data.role || 'student');
+                setTimeout(() => {
+                    navigate(data.role === 'admin' ? '/admin' : '/student');
+                }, 800);
+            } else {
+                setMessageType("error");
+                setMessage(data.message || "Google login failed.");
+            }
+        } catch (err) {
+            setMessageType("error");
+            setMessage("Network error during Google login.");
+        }
+    };
+
+    // Load Google Script and Initialize Button
+    useEffect(() => {
+        const script = document.createElement('script');
+        script.src = "https://accounts.google.com/gsi/client";
+        script.async = true;
+        script.onload = () => {
+            if (window.google) {
+                window.google.accounts.id.initialize({
+                    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+                    callback: handleGoogleResponse
+                });
+                window.google.accounts.id.renderButton(
+                    document.getElementById("googleSignInDiv"),
+                    { theme: "outline", size: "large" }
+                );
+            }
+        };
+        document.body.appendChild(script);
+        return () => {
+            if (document.body.contains(script)) document.body.removeChild(script);
+        };
+    }, []);
+
     const pws = passwordStrength(password);
     const pwsMeta = pwStrengthLabel(pws);
 
@@ -295,8 +338,7 @@ function Login({ setIsLoggedIn, setUserRole }) {
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                 <div className="muted">Or sign in with</div>
                                 <div className="socials">
-                                    <button aria-label="Sign in with Google" className="btn btn-ghost" onClick={() => handleSocial("google")}>Google</button>
-                                    <button aria-label="Sign in with Facebook" className="btn btn-ghost" onClick={() => handleSocial("facebook")}>Facebook</button>
+                                    <div id="googleSignInDiv"></div>
                                 </div>
                             </div>
                         </form>
@@ -336,7 +378,5 @@ function Login({ setIsLoggedIn, setUserRole }) {
         </div>
     );
 }
-
-
 
 export default Login;

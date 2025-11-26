@@ -9,6 +9,10 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import AdminDashboard from './pages/AdminDashboard';
 import StudentDashboard from './pages/StudentDashboard';
+import AdminInstructors from './pages/AdminInstructors';
+import AdminStudents from './pages/AdminStudents';
+import AdminBlog from './pages/AdminBlog';
+import AdminProducts from './pages/AdminProducts';
 import './App.css';
 
 import { useState } from 'react';
@@ -64,6 +68,10 @@ function App() {
             <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
             <Route path='/signup' element={<SignUp />} />
             <Route path="/admin" element={isLoggedIn && userRole === 'admin' ? <AdminDashboard /> : <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
+            <Route path="/admin/instructors" element={isLoggedIn && userRole === 'admin' ? <AdminInstructors /> : <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
+            <Route path="/admin/members" element={isLoggedIn && userRole === 'admin' ? <AdminStudents /> : <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
+            <Route path="/admin/blog" element={isLoggedIn && userRole === 'admin' ? <AdminBlog /> : <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
+            <Route path="/admin/products" element={isLoggedIn && userRole === 'admin' ? <AdminProducts /> : <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
             <Route path="/student" element={isLoggedIn && userRole === 'student' ? <StudentDashboard /> : <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />} />
           </Routes>
         </main>
