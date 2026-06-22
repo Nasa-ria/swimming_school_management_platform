@@ -2,6 +2,8 @@
 
 A premium, role-based swimming school management system built with **React (Vite)**, **Node.js (Express)**, and **MongoDB (Mongoose)**. This platform provides specialized portals for Administrators, Instructors, and Students to manage their training journeys.
 
+
+
 ## 🚀 Key Features
 
 ### 👤 Student Portal
