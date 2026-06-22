@@ -1,0 +1,133 @@
+.student-dashboard {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 0.5rem;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.view-all {
+    color: #0077CC;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.booking-list,
+.session-list {
+    list-style: none;
+    padding: 0;
+}
+
+.booking-item,
+.session-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    background: #fafafa;
+}
+
+.booking-info h4,
+.session-info h4 {
+    margin: 0 0 0.3rem 0;
+    color: #333;
+}
+
+.booking-info p,
+.session-info p {
+    margin: 0;
+    color: #777;
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.status-badge.confirmed {
+    background: #e6f7ed;
+    color: #05c46b;
+}
+
+.status-badge.pending {
+    background: #fff4e6;
+    color: #ffb545;
+}
+
+.session-action {
+    text-align: right;
+}
+
+.spots-left {
+    display: block;
+    font-size: 0.8rem;
+    color: #ff6b6b;
+    margin-bottom: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #0077CC;
+    color: #0077CC;
+}
+
+.btn-outline:hover {
+    background: #0077CC;
+    color: white;
+}
+
+.progress-summary {
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem 0;
+}
+
+.progress-item {
+    text-align: center;
+}
+
+.progress-item span {
+    display: block;
+    color: #777;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+.progress-item strong {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.mt-4 {
+    margin-top: 2rem;
+}
