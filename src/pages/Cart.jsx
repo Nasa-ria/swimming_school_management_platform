@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { showToast } from '../components/Toast';
-import { usePaystackPayment } from 'react-paystack';
+// import { usePaystackPayment } from 'react-paystack';
 
 export default function Cart() {
   const { cart, loading, updateQty, removeItem, clearCart } = useCart();
@@ -22,17 +22,29 @@ export default function Cart() {
   });
   const navigate = useNavigate();
 
-  const initializePayment = usePaystackPayment(paymentConfig || {
-    reference: (new Date()).getTime().toString(),
+const initializePayment = (onSuccess, onClose) => {
+  const handler = window.PaystackPop.setup({
+    key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_b8e5c66cb1e8f244122d4f26384a56a6838a5b9b',
     email: user?.email || 'customer@alraadswim.com',
-    amount: Math.round(cart.total * 100), // Convert to smaller currency unit
-    publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_b8e5c66cb1e8f244122d4f26384a56a6838a5b9b',
+    amount: Math.round(cart.total * 100),
+    ref: (new Date()).getTime().toString(),
     metadata: {
       payment_method: formData.paymentMethod,
       customer_name: formData.fullName,
       customer_phone: formData.phone,
     },
+    callback: (response) => {
+      onSuccess(response); // fires on success
+    },
+    onClose: () => {
+      onClose && onClose(); // fires when modal closed
+    },
   });
+
+  handler.openIframe();
+};
+
+  
 
   const submitOrderToBackend = async (reference = null) => {
     setIsCheckingOut(true);
