@@ -33,7 +33,8 @@ export default function Shop() {
   const fetchCategories = async () => {
     try {
       const { data } = await api.get('/products/categories');
-      setCategories(data);
+          setCategories(Array.isArray(data) ? data : data.categories || data.data || []);
+      // setCategories(data);
     } catch (err) {}
   };
 

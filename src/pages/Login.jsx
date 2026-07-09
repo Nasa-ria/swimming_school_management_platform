@@ -16,6 +16,7 @@ export default function Login() {
     setIsLoading(true);
     try {
       const user = await login(email, password);
+
       showToast(`Welcome back, ${user.name}!`, 'success');
       
       const searchParams = new URLSearchParams(location.search);
@@ -33,7 +34,9 @@ export default function Login() {
         navigate('/');
       }
     } catch (err) {
-      showToast(err.response?.data?.error || 'Login failed', 'error');
+       const message = err.response?.data?.error?.message || 'Login failed';
+       showToast(message, 'error');
+      // showToast(err.response?.data?.error || 'Login failed', 'error');
     } finally {
       setIsLoading(false);
     }
