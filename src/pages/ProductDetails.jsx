@@ -19,7 +19,8 @@ export default function ProductDetails() {
   const fetchProduct = async () => {
     try {
       const { data } = await api.get(`/products/${id}`);
-      setProduct(data);
+      setProduct(Array.isArray(data) ? data : data.product || data.data || []);
+      // setProduct(data);
     } catch (err) {
       showToast('Product not found', 'error');
     } finally {

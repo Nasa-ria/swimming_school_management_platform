@@ -21,7 +21,8 @@ export default function Shop() {
     try {
       setLoading(true);
       const { data } = await api.get('/products', { params: filter });
-      setProducts(data);
+      setProducts(Array.isArray(data) ? data : data.products || data.data || []);
+      // setProducts(data);
     } catch (err) {
       showToast('Failed to load products', 'error');
     } finally {

@@ -21,7 +21,8 @@ export default function Sessions() {
     try {
       setLoading(true);
       const { data } = await api.get('/sessions', { params: filter });
-      setSessions(data);
+           setSessionss(Array.isArray(data) ? data : data.sessions || data.data || []);
+      // setSessions(data);
     } catch (err) {
       showToast('Failed to load sessions', 'error');
     } finally {

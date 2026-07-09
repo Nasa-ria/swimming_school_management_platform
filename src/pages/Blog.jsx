@@ -12,7 +12,8 @@ export default function Blog() {
     const fetchPosts = async () => {
       try {
         const { data } = await api.get('/blog/posts');
-        setPosts(data);
+         setPosts(Array.isArray(data) ? data : data.posts || data.data || []);
+        // setPosts(data);
       } catch (err) {
         showToast('Failed to load blog posts', 'error');
       } finally {
@@ -21,6 +22,7 @@ export default function Blog() {
     };
     fetchPosts();
   }, []);
+
 
   return (
     <div className="portal-container" style={{ paddingTop: '4rem', paddingBottom: '6rem' }}>
