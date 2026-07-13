@@ -1,1 +1,10 @@
-{ "type": "commonjs" }
+{
+  "name": "swimming-school-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "vercel-build": "node index.js"
+  }
+}
