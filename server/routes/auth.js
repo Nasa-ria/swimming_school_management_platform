@@ -37,6 +37,11 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// GET /api/auth/login
+router.get('/login', (req, res) => {
+  res.status(405).json({ error: 'Use POST /api/auth/login with email and password.' });
+});
+
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
   console.log('--- LOGIN ROUTE REACHED ---');

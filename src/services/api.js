@@ -1,11 +1,13 @@
 import axios from 'axios';
 
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const rawBaseURL =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.API_URL ||
+  (isLocal ? 'http://localhost:5001/api' : 'https://swimming-school-backend.vercel.app/api');
 
 const api = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_URL ||
-    (isLocal ? 'http://localhost:5001/api' : 'https://swimming-school-backend.vercel.app/api'),
+  baseURL: rawBaseURL.replace(/\/+$/, ''),
   headers: { 'Content-Type': 'application/json' },
 });
 
