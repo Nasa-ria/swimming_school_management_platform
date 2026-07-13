@@ -10,6 +10,8 @@ const connectDB = async () => {
   try {
     const conn = await mongoose.connect(uri || 'mongodb://localhost:27017/swimming_school', {
       autoIndex: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 5000,
     });
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     return conn;

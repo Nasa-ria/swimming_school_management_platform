@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const User = require('../models/User');
 const { authenticate } = require('../middleware/auth');
 
@@ -53,9 +54,15 @@ router.post('/login', async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email });
+    if (mongoose.connection.readyState !== 1) {
+      console.warn('Database unavailable; skipping login lookup.');
+      return res.status(503).json({
+        error: 'Authentication service is temporarily unavailable. Please try again later.'
+      });
+    }
+
+    const user = await User.findOne({ email }).maxTimeMS(5000);
     if (!user) {
-      console.log('User not found:', email);
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
     
