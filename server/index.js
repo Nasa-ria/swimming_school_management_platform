@@ -97,22 +97,34 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/sessions', require('./routes/sessions'));
-app.use('/api/bookings', require('./routes/bookings'));
-app.use('/api/blog', require('./routes/blog'));
-app.use('/api/products', require('./routes/products'));
-app.use('/api/cart', require('./routes/cart'));
-app.use('/api/orders', require('./routes/orders'));
-app.use('/api/payments', require('./routes/payments'));
-app.use('/api/profile', require('./routes/profile'));
-app.use('/api/admin', require('./routes/admin'));
-app.use('/api/instructor', require('./routes/instructor'));
-app.use('/api/student', require('./routes/student'));
+const registerRoutes = () => {
+  const routes = [
+    ['/', () => app.get('/', (req, res) => res.send('Swimming School API is running...'))],
+    ['/api/auth', './routes/auth'],
+    ['/api/sessions', './routes/sessions'],
+    ['/api/bookings', './routes/bookings'],
+    ['/api/blog', './routes/blog'],
+    ['/api/products', './routes/products'],
+    ['/api/cart', './routes/cart'],
+    ['/api/orders', './routes/orders'],
+    ['/api/payments', './routes/payments'],
+    ['/api/profile', './routes/profile'],
+    ['/api/admin', './routes/admin'],
+    ['/api/instructor', './routes/instructor'],
+    ['/api/student', './routes/student']
+  ];
 
-app.get('/', (req, res) => {
-  res.send('Swimming School API is running...');
-});
+  routes.forEach(([path, handler]) => {
+    if (path === '/') return;
+    try {
+      app.use(path, require(handler));
+    } catch (err) {
+      console.error(`Failed to load route ${path}:`, err.message);
+    }
+  });
+};
+
+registerRoutes();
 
 if (require.main === module) {
   app.listen(PORT, () => {

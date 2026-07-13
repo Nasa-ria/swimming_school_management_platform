@@ -12,9 +12,10 @@ const connectDB = async () => {
       autoIndex: true,
     });
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    return conn;
   } catch (err) {
-    console.error('❌ MongoDB Connection Error:', err);
-    process.exit(1);
+    console.error('❌ MongoDB Connection Error:', err.message);
+    return null;
   }
 };
 
