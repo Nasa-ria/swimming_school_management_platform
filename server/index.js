@@ -71,14 +71,19 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
 const connectDB = require('./db');
 
-if (process.env.MONGODB_URI) {
-  connectDB().catch((err) => {
+const startDatabase = async () => {
+  try {
+    await connectDB();
+  } catch (err) {
     console.error('⚠️ Database connection failed during startup:', err.message);
-  });
-} else {
-  console.warn('⚠️ MONGODB_URI is not set. Running without database connection.');
+  }
+};
+
+if (!process.env.VERCEL) {
+  startDatabase();
 }
 
 const allowedOrigins = [
@@ -120,32 +125,26 @@ app.get('/', (req, res) => {
   res.send('Swimming School API is running...');
 });
 
-const registerRoutes = () => {
-  const routes = [
-    ['/api/auth', './routes/auth'],
-    ['/api/sessions', './routes/sessions'],
-    ['/api/bookings', './routes/bookings'],
-    ['/api/blog', './routes/blog'],
-    ['/api/products', './routes/products'],
-    ['/api/cart', './routes/cart'],
-    ['/api/orders', './routes/orders'],
-    ['/api/payments', './routes/payments'],
-    ['/api/profile', './routes/profile'],
-    ['/api/admin', './routes/admin'],
-    ['/api/instructor', './routes/instructor'],
-    ['/api/student', './routes/student']
-  ];
-
-  routes.forEach(([path, handler]) => {
-    try {
-      app.use(path, require(handler));
-    } catch (err) {
-      console.error(`Failed to load route ${path}:`, err.message);
-    }
-  });
+const loadRoute = (path, handler) => {
+  try {
+    app.use(path, require(handler));
+  } catch (err) {
+    console.error(`Failed to load route ${path}:`, err.message);
+  }
 };
 
-registerRoutes();
+loadRoute('/api/auth', './routes/auth');
+loadRoute('/api/sessions', './routes/sessions');
+loadRoute('/api/bookings', './routes/bookings');
+loadRoute('/api/blog', './routes/blog');
+loadRoute('/api/products', './routes/products');
+loadRoute('/api/cart', './routes/cart');
+loadRoute('/api/orders', './routes/orders');
+loadRoute('/api/payments', './routes/payments');
+loadRoute('/api/profile', './routes/profile');
+loadRoute('/api/admin', './routes/admin');
+loadRoute('/api/instructor', './routes/instructor');
+loadRoute('/api/student', './routes/student');
 
 if (require.main === module) {
   app.listen(PORT, () => {
