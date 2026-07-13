@@ -97,9 +97,12 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/', (req, res) => {
+  res.send('Swimming School API is running...');
+});
+
 const registerRoutes = () => {
   const routes = [
-    ['/', () => app.get('/', (req, res) => res.send('Swimming School API is running...'))],
     ['/api/auth', './routes/auth'],
     ['/api/sessions', './routes/sessions'],
     ['/api/bookings', './routes/bookings'],
@@ -115,7 +118,6 @@ const registerRoutes = () => {
   ];
 
   routes.forEach(([path, handler]) => {
-    if (path === '/') return;
     try {
       app.use(path, require(handler));
     } catch (err) {
