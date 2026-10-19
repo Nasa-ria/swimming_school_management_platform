@@ -214,6 +214,63 @@ router.put('/students/:studentId/level', authenticate, isInstructor, async (req,
   }
 });
 
+// GET /api/instructor/students/:studentId
+// Full profile + session/evaluation history for one student
+router.get('/students/:studentId', authenticate, isInstructor, async (req, res) => {
+  try {
+    const student = await User.findOne({ _id: req.params.studentId, role: 'student' })
+      .select('name email phone avatar student_profile createdAt');
+    if (!student) return res.status(404).json({ error: 'Student not found.' });
+
+    const isAdmin = req.user.role === 'admin';
+    const isAssigned = student.student_profile?.assigned_instructor?.toString() === req.user.id;
+
+    const myConfirmedBooking = isAdmin || isAssigned ? true : await Booking.exists({
+      user: student._id,
+      status: 'confirmed',
+      session: { $in: (await Session.find({ instructor: req.user.id }).select('_id')).map(s => s._id) }
+    });
+
+    if (!isAdmin && !isAssigned && !myConfirmedBooking) {
+      return res.status(403).json({ error: 'Access denied.' });
+    }
+
+    const evaluationFilter = { student: student._id };
+    if (!isAdmin) evaluationFilter.instructor = req.user.id;
+
+    const [evaluations, bookings] = await Promise.all([
+      Evaluation.find(evaluationFilter).sort({ createdAt: -1 }).populate('session', 'title start_time'),
+      Booking.find({ user: student._id }).sort({ createdAt: -1 }).populate({
+        path: 'session',
+        select: 'title start_time end_time location level instructor',
+        match: isAdmin ? {} : { instructor: req.user.id }
+      })
+    ]);
+
+    const history = bookings.filter(b => b.session);
+    const attended = history.filter(b => b.attendance === 'present').length;
+    const marked = history.filter(b => b.attendance !== 'pending').length;
+    const avgScore = evaluations.length
+      ? Math.round(evaluations.reduce((sum, e) => sum + (e.performance_score || 0), 0) / evaluations.length)
+      : null;
+
+    res.json({
+      student,
+      stats: {
+        total_sessions: history.length,
+        attendance_rate: marked ? Math.round((attended / marked) * 100) : null,
+        average_score: avgScore,
+        total_evaluations: evaluations.length
+      },
+      evaluations,
+      history
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch student profile.' });
+  }
+});
+
 // GET /api/instructor/my-students
 // Get all students directly assigned to this instructor (or all students if admin)
 router.get('/my-students', authenticate, isInstructor, async (req, res) => {

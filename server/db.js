@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 require('dotenv').config();
 
 const localUri = 'mongodb://127.0.0.1:27017/swimming_school';
@@ -33,10 +32,24 @@ const tryConnect = async (uri) => {
   }
 };
 
+let cachedConnection = null;
+let pendingConnection = null;
+
+// Cached so repeated calls reuse one connection.
 const connectDB = async () => {
+  if (cachedConnection && mongoose.connection.readyState === 1) return cachedConnection;
+  if (!pendingConnection) {
+    pendingConnection = establishConnection()
+      .then((conn) => { cachedConnection = conn; return conn; })
+      .finally(() => { pendingConnection = null; });
+  }
+  return pendingConnection;
+};
+
+const establishConnection = async () => {
   const urisToTry = [];
   if (process.env.MONGODB_URI) urisToTry.push(process.env.MONGODB_URI);
-  urisToTry.push(localUri);
+  if (process.env.NODE_ENV !== 'production') urisToTry.push(localUri);
 
   for (const uri of urisToTry) {
     const conn = await tryConnect(uri);
@@ -54,6 +67,8 @@ const connectDB = async () => {
 
   if (process.env.NODE_ENV !== 'production') {
     try {
+      // Dev-only dependency; loaded lazily so production installs don't need it.
+      const { MongoMemoryServer } = require('mongodb-memory-server');
       memoryServer = await MongoMemoryServer.create();
       const memoryUri = memoryServer.getUri();
       console.log(`🧪 Using in-memory MongoDB at ${memoryUri}`);

@@ -57,7 +57,6 @@
 // //   console.log(`🚀 Server running on http://localhost:${PORT}`);
 // // });
 
-// // Only listen locally — Vercel serverless doesn't use this
 // if (require.main === module) {
 //   app.listen(PORT, () => {
 //     console.log(`🚀 Server running on http://localhost:${PORT}`);
@@ -82,44 +81,26 @@ const startDatabase = async () => {
   }
 };
 
-if (!process.env.VERCEL) {
-  startDatabase();
-}
+startDatabase();
 
 const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'http://127.0.0.1:5173',
-  process.env.CLIENT_URL,
-  'https://swimming-school-management-platform.vercel.app'
+  ...(process.env.CLIENT_URL || '').split(',').map((o) => o.trim().replace(/\/+$/, '')),
+  'https://leafy-melba-68a1a5.netlify.app'
 ].filter(Boolean);
+
+const isDev = process.env.NODE_ENV !== 'production';
+const localhostOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-      return;
-    }
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    if (isDev && localhostOrigin.test(origin)) return callback(null, true);
     callback(null, false);
   },
   credentials: true
 }));
 
 app.use(express.json());
-
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin && allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  } else {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-  }
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  if (req.method === 'OPTIONS') return res.sendStatus(200);
-  next();
-});
 
 app.get('/', (req, res) => {
   res.send('Swimming School API is running...');

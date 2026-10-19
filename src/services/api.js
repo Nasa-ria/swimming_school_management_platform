@@ -4,7 +4,7 @@ const isLocal = window.location.hostname === 'localhost' || window.location.host
 const rawBaseURL =
   import.meta.env.VITE_API_URL ||
   import.meta.env.API_URL ||
-  (isLocal ? 'http://localhost:5001/api' : 'https://swimming-school-backend.vercel.app/api');
+  (isLocal ? 'http://localhost:5001/api' : '/api');
 
 const api = axios.create({
   baseURL: rawBaseURL.replace(/\/+$/, ''),

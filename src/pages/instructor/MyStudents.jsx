@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { showToast } from '../../components/Toast';
 
 export default function MyStudents() {
+  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -105,8 +107,20 @@ export default function MyStudents() {
             </div>
 
             <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <button className="btn-saas btn-saas-outline" style={{ flex: 1, fontSize: '0.75rem', justifyContent: 'center' }}>View Profile</button>
-              <button className="btn-saas btn-saas-outline" style={{ flex: 1, fontSize: '0.75rem', justifyContent: 'center' }}>History</button>
+              <button
+                className="btn-saas btn-saas-outline"
+                style={{ flex: 1, fontSize: '0.75rem', justifyContent: 'center' }}
+                onClick={() => navigate(`/instructor/students/${s._id}`)}
+              >
+                View Profile
+              </button>
+              <button
+                className="btn-saas btn-saas-outline"
+                style={{ flex: 1, fontSize: '0.75rem', justifyContent: 'center' }}
+                onClick={() => navigate(`/instructor/students/${s._id}?tab=history`)}
+              >
+                History
+              </button>
             </div>
           </div>
         ))}

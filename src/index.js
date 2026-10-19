@@ -92,7 +92,7 @@ app.use((err, req, res, next) => {
 //   console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
 // });
 
-// Start server locally only (Vercel doesn't use this)
+// Start server when run directly
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`✅ Server is running on http://localhost:${PORT}`);

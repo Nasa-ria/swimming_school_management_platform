@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import api from "../services/api";
 // const baseUrl = process.env.REACT_APP_BASE_URL;
 
 const initialState = {
@@ -59,37 +60,29 @@ function SignUp() {
         if (Object.keys(validationErrors).length === 0) {
             setLoading(true);
             try {
-                const response = await fetch('http://localhost:5000/api/auth/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        fullName: form.fullName,
-                        email: form.email,
-                        password: form.password,
-                        phone: form.phone,
-                        role: 'student' // Default role for signup
-                    }),
+                const { data } = await api.post('/auth/register', {
+                    name: form.fullName,
+                    email: form.email,
+                    password: form.password,
+                    phone: form.phone,
                 });
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    setSubmitted(true);
-                    setForm(initialState);
-                    // Optionally store token and redirect
-                    if (data.token) {
-                        localStorage.setItem('authToken', data.token);
-                        // Redirect to dashboard after 2 seconds
-                        setTimeout(() => {
-                            window.location.href = '/student';
-                        }, 2000);
-                    }
-                } else {
-                    setErrors({ submit: data.message || 'Registration failed. Please try again.' });
+                setSubmitted(true);
+                setForm(initialState);
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/student';
+                    }, 2000);
                 }
             } catch (error) {
                 console.error('Registration error:', error);
-                setErrors({ submit: 'Network error. Please check your connection and try again.' });
+                setErrors({
+                    submit: error.response
+                        ? error.response.data?.error || 'Registration failed. Please try again.'
+                        : 'Network error. Please check your connection and try again.',
+                });
             } finally {
                 setLoading(false);
             }

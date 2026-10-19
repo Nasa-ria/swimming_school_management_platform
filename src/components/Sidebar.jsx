@@ -51,8 +51,8 @@ export default function Sidebar({ isOpen, onClose }) {
     <>
       {/* Mobile Overlay */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[40] lg:hidden transition-all duration-300"
+        <div
+          className="sidebar-overlay-saas"
           onClick={onClose}
         />
       )}
@@ -62,7 +62,7 @@ export default function Sidebar({ isOpen, onClose }) {
           <Link to="/" className="sidebar-logo-saas">
             Alraad<span>Swim</span>
           </Link>
-          <button className="lg:hidden ml-auto text-white/60 hover:text-white" onClick={onClose}>
+          <button className="sidebar-close-saas" onClick={onClose}>
             ✕
           </button>
         </div>

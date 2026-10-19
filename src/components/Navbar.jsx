@@ -8,7 +8,6 @@ export default function Navbar() {
   const { itemCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -20,10 +19,7 @@ export default function Navbar() {
   const handleLogout = () => {
     logout();
     navigate('/');
-    setMenuOpen(false);
   };
-
-  const close = () => setMenuOpen(false);
 
   // If we are on a dashboard page, the DashboardLayout handles the header
   const isDashboardPage = location.pathname.startsWith('/admin') || 
@@ -36,7 +32,7 @@ export default function Navbar() {
     <header className={`navbar-saas ${scrolled ? 'scrolled' : ''}`}>
       <div className="portal-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
         {/* Logo */}
-        <Link to="/" className="sidebar-logo-saas" style={{ color: 'var(--navy)', marginBottom: 0 }} onClick={close}>
+        <Link to="/" className="sidebar-logo-saas" style={{ color: 'var(--navy)', marginBottom: 0 }}>
           Alraad<span>Swim</span>
         </Link>
 
@@ -80,38 +76,7 @@ export default function Navbar() {
             </div>
           )}
         </nav>
-
-        {/* Mobile Toggle */}
-        <button className="mobile-toggle-saas lg:hidden" onClick={() => setMenuOpen(!menuOpen)}>
-          {menuOpen ? '✕' : '☰'}
-        </button>
       </div>
-
-      {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="mobile-menu-saas lg:hidden">
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', padding: '2rem' }}>
-            <Link to="/sessions" onClick={close}>Sessions</Link>
-            <Link to="/blog" onClick={close}>Journal</Link>
-            <Link to="/shop" onClick={close}>Shop</Link>
-            <div style={{ height: '1px', background: 'var(--border-light)' }}></div>
-            {isLoggedIn ? (
-              <>
-                <Link to="/profile" onClick={close}>My Profile</Link>
-                {(isStudent || isAdmin || isInstructor) && (
-                  <Link to={isAdmin ? '/admin' : (isInstructor ? '/instructor' : '/student/dashboard')} onClick={close}>Open Portal</Link>
-                )}
-                <button className="btn-saas btn-saas-primary" onClick={handleLogout}>Sign Out</button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" onClick={close}>Sign In</Link>
-                <Link to="/register" className="btn-saas btn-saas-primary" onClick={close}>Join Academy</Link>
-              </>
-            )}
-          </nav>
-        </div>
-      )}
 
       <style>{`
         .navbar-saas {
@@ -120,7 +85,7 @@ export default function Navbar() {
           left: 0;
           width: 100%;
           height: 70px;
-          background: rgba(255, 255, 255, 0.8);
+          background: rgba(253, 252, 250, 0.8);
           backdrop-filter: blur(12px);
           z-index: 1000;
           transition: all 0.3s ease;
@@ -128,7 +93,7 @@ export default function Navbar() {
         }
         .navbar-saas.scrolled {
           height: 64px;
-          background: white;
+          background: var(--bg-surface);
           border-bottom: 1px solid var(--border-light);
           box-shadow: var(--shadow-sm);
         }
@@ -141,22 +106,8 @@ export default function Navbar() {
         .nav-link-saas:hover, .nav-link-saas.active {
           color: var(--primary);
         }
-        .mobile-menu-saas {
-          position: fixed;
-          top: 70px;
-          left: 0;
-          width: 100%;
-          background: white;
-          border-bottom: 1px solid var(--border-light);
-          box-shadow: var(--shadow-lg);
-          z-index: 999;
-        }
-        .mobile-toggle-saas {
-          font-size: 1.5rem;
-          color: var(--navy);
-        }
-        @media (max-width: 1023px) {
-          .desktop-nav-saas { display: none !important; }
+        @media (max-width: 640px) {
+          .desktop-nav-saas { gap: 1rem; }
         }
       `}</style>
     </header>

@@ -28,6 +28,7 @@ import InstructorDashboard from './pages/instructor/Dashboard';
 import MyStudents from './pages/instructor/MyStudents';
 import InstructorSessions from './pages/instructor/InstructorSessions';
 import GradingHub from './pages/instructor/GradingHub';
+import StudentProfile from './pages/instructor/StudentProfile';
 
 // Pages — admin
 import AdminDashboard from './pages/admin/Dashboard';
@@ -97,6 +98,7 @@ function AppRoutes() {
           {/* Instructor Role */}
           <Route path="/instructor" element={<RoleGuard allowedRoles={['instructor', 'admin']}><DashboardRoute><InstructorDashboard /></DashboardRoute></RoleGuard>} />
           <Route path="/instructor/students" element={<RoleGuard allowedRoles={['instructor', 'admin']}><DashboardRoute><MyStudents /></DashboardRoute></RoleGuard>} />
+          <Route path="/instructor/students/:studentId" element={<RoleGuard allowedRoles={['instructor', 'admin']}><DashboardRoute><StudentProfile /></DashboardRoute></RoleGuard>} />
           <Route path="/instructor/sessions" element={<RoleGuard allowedRoles={['instructor', 'admin']}><DashboardRoute><InstructorSessions /></DashboardRoute></RoleGuard>} />
           <Route path="/instructor/performance" element={<RoleGuard allowedRoles={['instructor', 'admin']}><DashboardRoute><GradingHub /></DashboardRoute></RoleGuard>} />
 

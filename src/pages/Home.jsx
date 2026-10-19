@@ -13,7 +13,7 @@ const CAROUSEL_SLIDES = [
     subtitle: 'From foundational breathing to competitive stroke refinement, our tailored sessions accelerate your progress in the water.'
   },
   {
-    image: 'https://images.unsplash.com/photo-1600965962361-9025dd314715?w=1600&auto=format',
+    image: 'https://images.unsplash.com/photo-1622629797619-c100e3e67e2e?w=1600&auto=format',
     title: 'World-Class Instructors',
     subtitle: 'Train alongside professionals dedicated to your safety, confidence, and ultimate aquatic success.'
   }
@@ -69,7 +69,7 @@ export default function Home() {
                   </p>
                   <div style={{ display: 'flex', gap: '1.25rem', animation: 'fadeUp 1.4s ease-out' }}>
                     <Link to="/sessions" className="btn-saas btn-saas-primary" style={{ padding: '16px 40px', fontSize: '1rem' }}>Explore Programs</Link>
-                    <Link to="/register" className="btn-saas btn-saas-outline" style={{ padding: '16px 40px', fontSize: '1rem', color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}>Join the Academy</Link>
+                    <Link to="/register" className="btn-saas btn-saas-outline" style={{ padding: '16px 40px', fontSize: '1rem', background: 'transparent', color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}>Join the Academy</Link>
                   </div>
                 </>
               )}
@@ -155,12 +155,12 @@ export default function Home() {
         <div className="portal-container" style={{ position: 'relative', zIndex: 2 }}>
           <div className="card-saas" style={{ background: 'var(--navy)', color: 'white', padding: '5rem', textAlign: 'center', border: 'none', boxShadow: '0 30px 60px rgba(10,22,40,0.4)' }}>
             <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1.5rem', color: 'white' }}>Start Your Journey Today</h2>
-            <p style={{ fontSize: '1.2rem', marginBottom: '3rem', opacity: 0.8, maxWidth: '600px', margin: '0 auto' }}>
+            <p style={{ fontSize: '1.2rem', marginBottom: '3rem', opacity: 0.8, maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
               Whether you're taking your first splash or aiming for the podium, we have a specialized program designed for you.
             </p>
             <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center' }}>
               <Link to="/register" className="btn-saas btn-saas-primary" style={{ padding: '16px 48px' }}>Create Account</Link>
-              <Link to="/blog" className="btn-saas btn-saas-outline" style={{ padding: '16px 48px', color: 'white', borderColor: 'rgba(255,255,255,0.2)' }}>Read Training Tips</Link>
+              <Link to="/blog" className="btn-saas btn-saas-outline" style={{ padding: '16px 48px', background: 'transparent', color: 'white', borderColor: 'rgba(255,255,255,0.2)' }}>Read Training Tips</Link>
             </div>
           </div>
         </div>
