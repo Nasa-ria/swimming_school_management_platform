@@ -85,7 +85,7 @@ startDatabase();
 
 const allowedOrigins = [
   ...(process.env.CLIENT_URL || '').split(',').map((o) => o.trim().replace(/\/+$/, '')),
-  'https://leafy-melba-68a1a5.netlify.app'
+  'https://swimmingmanagement.netlify.app'
 ].filter(Boolean);
 
 const isDev = process.env.NODE_ENV !== 'production';
